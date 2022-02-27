@@ -18,12 +18,13 @@ import os
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
-from keras.utils.np_utils import to_categorical
-from keras.models import Model,Sequential, Input, load_model
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D, BatchNormalization, AveragePooling2D, GlobalAveragePooling2D
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.models import Model,Sequential, load_model
+from tensorflow.keras.layers import Input
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D, BatchNormalization, AveragePooling2D, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import Adam
-from keras.preprocessing.image import ImageDataGenerator
-from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.applications import InceptionV3
 
 import numpy as np
@@ -34,7 +35,9 @@ from tensorflow.keras.models import *
 from tensorflow.keras.preprocessing import image
 
 disease_types=['COVID', 'non-COVID']
-data_dir = '/content/drive/MyDrive/ML/COVID_19_DATA/'
+#data_dir = '/content/drive/MyDrive/ML/COVID_19_DATA/'
+data_dir = '/home/foysal/Documents/Research/Machine_Learning/COVID_19_DATA/'
+
 train_dir = os.path.join(data_dir)
 
 train_data = []
@@ -187,7 +190,7 @@ def build_in():
 
 model = build_in()
 annealer = ReduceLROnPlateau(monitor='val_accuracy', factor=0.5, patience=5, verbose=1, min_lr=1e-3)
-checkpoint = ModelCheckpoint('cnn.h5', verbose=1, save_best_only=True)
+checkpoint = ModelCheckpoint('/home/foysal/Documents/Research/Machine_Learning/COVID_CT/cnn.h5', verbose=1, save_best_only=True)
 # Generates batches of image data with data augmentation
 datagen = ImageDataGenerator(rotation_range=360, # Degree range for random rotations
                         width_shift_range=0.2, # Range for random horizontal shifts
@@ -205,7 +208,7 @@ hist = model.fit_generator(datagen.flow(X_train, Y_train, batch_size=BATCH_SIZE)
                callbacks=[annealer, checkpoint],
                validation_data=(X_val, Y_val))
 
-model = load_model('/content/cnn.h5')
+model = load_model('/home/foysal/Documents/Research/Machine_Learning/COVID_CT/cnn.h5')
 final_loss, final_accuracy = model.evaluate(X_val, Y_val)
 print('Final Loss: {}, Final Accuracy: {}'.format(final_loss, final_accuracy))
 
@@ -272,8 +275,8 @@ plt.show()
 from skimage import io
 from keras.preprocessing import image
 #path='imbalanced/Scratch/Scratch_400.jpg'
-img = image.load_img('/content/drive/MyDrive/ML/COVID_19_DATA/COVID/Covid (1010).png', grayscale=False, target_size=(120, 120))
-show_img=image.load_img('/content/drive/MyDrive/ML/COVID_19_DATA/COVID/Covid (1010).png', grayscale=False, target_size=(200, 200))
+img = image.load_img('/home/foysal/Documents/Research/Machine_Learning/COVID_19_DATA/COVID/Covid (1010).png', grayscale=False, target_size=(120, 120))
+show_img=image.load_img('/home/foysal/Documents/Research/Machine_Learning/COVID_19_DATA/COVID/Covid (1010).png', grayscale=False, target_size=(200, 200))
 disease_class=['Covid-19','Non Covid-19']
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis = 0)
